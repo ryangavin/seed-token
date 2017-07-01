@@ -1,5 +1,7 @@
 pragma solidity ^0.4.8;
 
+import "./Token.sol";
+
 contract CrowdSale {
     address public beneficiary;
     uint public fundingGoal; uint public amountRaised; uint public deadline; uint public price;
@@ -14,17 +16,17 @@ contract CrowdSale {
 
     /*  at initialization, setup the owner */
     function CrowdSale(
-    address ifSuccessfulSendTo,
-    uint fundingGoalInEthers,
-    uint durationInMinutes,
-    uint etherCostOfEachToken,
-    Token addressOfTokenUsedAsReward
+        address ifSuccessfulSendTo,
+        uint fundingGoalInEthers,
+        uint durationInMinutes,
+        uint etherCostOfEachToken,
+        Token addressOfTokenUsedAsReward
     ) {
         beneficiary = ifSuccessfulSendTo;
         fundingGoal = fundingGoalInEthers * 1 ether;
         deadline = now + durationInMinutes * 1 minutes;
         price = etherCostOfEachToken * 1 ether;
-        tokenReward = token(addressOfTokenUsedAsReward);
+        tokenReward = Token(addressOfTokenUsedAsReward);
     }
 
     /* The function without name is the default function that is called whenever anyone sends funds to a contract */

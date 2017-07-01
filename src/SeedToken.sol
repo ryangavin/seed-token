@@ -1,5 +1,8 @@
 pragma solidity ^0.4.8;
 
+import "./Token.sol";
+import "./TokenRecipient.sol";
+
 contract SeedToken is Token {
     /* Public variables of the token */
     string public standard = 'Token 0.1';
@@ -50,7 +53,7 @@ contract SeedToken is Token {
 
     /* Approve and then communicate the approved contract in a single tx */
     function approveAndCall(address _spender, uint256 _value, bytes _extraData) returns (bool success) {
-        TokenRecipient spender = tokenRecipient(_spender);
+        TokenRecipient spender = TokenRecipient(_spender);
         if (approve(_spender, _value)) {
             spender.receiveApproval(msg.sender, _value, this, _extraData);
             return true;
