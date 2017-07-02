@@ -1,41 +1,41 @@
 pragma solidity ^0.4.8;
 
-import "./Token.sol";
+import "./Mintable.sol";
 
 contract CrowdSale {
     address public beneficiary;
     uint public fundingGoal; uint public amountRaised; uint public deadline; uint public price;
-    Token public tokenReward;
+    Mintable public tokenReward;
     mapping(address => uint256) public balanceOf;
     bool fundingGoalReached = false;
     event GoalReached(address beneficiary, uint amountRaised);
     event FundTransfer(address backer, uint amount, bool isContribution);
-    bool crowdsaleClosed = false;
+    bool crowdSaleClosed = false;
 
     /* data structure to hold information about campaign contributors */
 
     /*  at initialization, setup the owner */
     function CrowdSale(
         address ifSuccessfulSendTo,
-        uint fundingGoalInEthers,
+        uint fundingGoalInEther,
         uint durationInMinutes,
         uint etherCostOfEachToken,
-        Token addressOfTokenUsedAsReward
+        Mintable addressOfTokenUsedAsReward
     ) {
         beneficiary = ifSuccessfulSendTo;
-        fundingGoal = fundingGoalInEthers * 1 ether;
+        fundingGoal = fundingGoalInEther * 1 ether;
         deadline = now + durationInMinutes * 1 minutes;
         price = etherCostOfEachToken * 1 ether;
-        tokenReward = Token(addressOfTokenUsedAsReward);
+        tokenReward = Mintable(addressOfTokenUsedAsReward);
     }
 
     /* The function without name is the default function that is called whenever anyone sends funds to a contract */
     function () payable {
-        if (crowdsaleClosed) throw;
+        if (crowdSaleClosed) throw;
         uint amount = msg.value;
         balanceOf[msg.sender] = amount;
         amountRaised += amount;
-        tokenReward.transfer(msg.sender, amount / price);
+        tokenReward.mintToken(msg.sender, amount / price);
         FundTransfer(msg.sender, amount, true);
     }
 
@@ -47,7 +47,7 @@ contract CrowdSale {
             fundingGoalReached = true;
             GoalReached(beneficiary, amountRaised);
         }
-        crowdsaleClosed = true;
+        crowdSaleClosed = true;
     }
 
 
