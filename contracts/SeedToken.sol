@@ -11,7 +11,7 @@ contract SeedToken is Owned, Mintable, ERC20 {
     string public name = "Seed Token";
     string public symbol = "SEED";
     uint8 public decimals = 18;
-    uint256 public totalSupply = 0;
+    uint256 supply = 0;
 
     /* This creates an array with all balances */
     mapping (address => uint256) public balanceOf;
@@ -20,12 +20,8 @@ contract SeedToken is Owned, Mintable, ERC20 {
     /* This notifies clients about the amount burnt */
     event Burn(address indexed from, uint256 value);
 
-    /* Empty constructor */
-    function SeedToken() {
-    }
-
     function totalSupply() constant returns (uint256 totalSupply) {
-        return totalSupply;
+        return supply;
     }
 
     function balanceOf(address _owner) constant returns (uint256 balance) {
@@ -35,7 +31,7 @@ contract SeedToken is Owned, Mintable, ERC20 {
     /* Mint coins */
     function mintToken(address _receiver, uint256 _amount) onlyOwner returns (bool success) {
         if (_receiver == 0x0) return false;                 // Prevent transfer to 0x0 address
-        totalSupply += _amount;                             // Add to the total supply
+        supply += _amount;                             // Add to the total supply
         balanceOf[_receiver] += _amount;                    // Add to the receiver's balance
         TokenMinted(_receiver, _amount);                    // Notify anyone listening that new tokens have been minted
         return true;
@@ -90,7 +86,7 @@ contract SeedToken is Owned, Mintable, ERC20 {
     function burn(uint256 _value) returns (bool success) {
         if (balanceOf[msg.sender] < _value) throw;            // Check if the sender has enough
         balanceOf[msg.sender] -= _value;                      // Subtract from the sender
-        totalSupply -= _value;                                // Updates totalSupply
+        supply -= _value;                                // Updates totalSupply
         Burn(msg.sender, _value);
         return true;
     }
@@ -99,7 +95,7 @@ contract SeedToken is Owned, Mintable, ERC20 {
         if (balanceOf[_from] < _value) throw;                // Check if the sender has enough
         if (_value > allowance[_from][msg.sender]) throw;    // Check allowance
         balanceOf[_from] -= _value;                          // Subtract from the sender
-        totalSupply -= _value;                               // Updates totalSupply
+        supply -= _value;                               // Updates totalSupply
         Burn(_from, _value);
         return true;
     }
