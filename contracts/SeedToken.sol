@@ -34,6 +34,7 @@ contract SeedToken is Owned, Mintable, ERC20 {
         supply += _amount;                                          // Add to the total supply
         balanceOf[_receiver] += _amount;                            // Add to the receiver's balance
         TokenMinted(_receiver, _amount);                            // Notify anyone listening that new tokens have been minted
+        Transfer(address(this), _receiver, _amount);                // Create a token transfer event
         return true;
     }
 
