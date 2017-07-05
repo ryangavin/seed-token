@@ -30,10 +30,10 @@ contract SeedToken is Owned, Mintable, ERC20 {
 
     /* Mint coins */
     function mintToken(address _receiver, uint256 _amount) onlyOwner returns (bool success) {
-        if (_receiver == 0x0) return false;                 // Prevent transfer to 0x0 address
-        supply += _amount;                             // Add to the total supply
-        balanceOf[_receiver] += _amount;                    // Add to the receiver's balance
-        TokenMinted(_receiver, _amount);                    // Notify anyone listening that new tokens have been minted
+        if (_receiver == 0x0) return false;                         // Prevent transfer to 0x0 address
+        supply += _amount;                                          // Add to the total supply
+        balanceOf[_receiver] += _amount;                            // Add to the receiver's balance
+        TokenMinted(_receiver, _amount);                            // Notify anyone listening that new tokens have been minted
         return true;
     }
 
@@ -72,30 +72,30 @@ contract SeedToken is Owned, Mintable, ERC20 {
 
     /* A contract attempts to get the coins */
     function transferFrom(address _from, address _to, uint256 _value) returns (bool success) {
-        if (_to == 0x0) throw;                                // Prevent transfer to 0x0 address. Use burn() instead
-        if (balanceOf[_from] < _value) throw;                 // Check if the sender has enough
-        if (balanceOf[_to] + _value < balanceOf[_to]) throw;  // Check for overflows
-        if (_value > allowance[_from][msg.sender]) throw;     // Check allowance
-        balanceOf[_from] -= _value;                           // Subtract from the sender
-        balanceOf[_to] += _value;                             // Add the same to the recipient
-        allowance[_from][msg.sender] -= _value;
+        if (_to == 0x0) return false;                               // Prevent transfer to 0x0 address. Use burn() instead
+        if (balanceOf[_from] < _value) return false;                // Check if the sender has enough
+        if (balanceOf[_to] + _value < balanceOf[_to]) return false; // Check for overflows
+        if (_value > allowance[_from][msg.sender]) return false;    // Check allowance
+        balanceOf[_from] -= _value;                                 // Subtract from the sender
+        balanceOf[_to] += _value;                                   // Add the same to the recipient
+        allowance[_from][msg.sender] -= _value;                     // Subtract the allowance
         Transfer(_from, _to, _value);
         return true;
     }
 
     function burn(uint256 _value) returns (bool success) {
-        if (balanceOf[msg.sender] < _value) throw;            // Check if the sender has enough
-        balanceOf[msg.sender] -= _value;                      // Subtract from the sender
-        supply -= _value;                                // Updates totalSupply
+        if (balanceOf[msg.sender] < _value) return false;           // Check if the sender has enough
+        balanceOf[msg.sender] -= _value;                            // Subtract from the sender
+        supply -= _value;                                           // Updates totalSupply
         Burn(msg.sender, _value);
         return true;
     }
 
     function burnFrom(address _from, uint256 _value) returns (bool success) {
-        if (balanceOf[_from] < _value) throw;                // Check if the sender has enough
-        if (_value > allowance[_from][msg.sender]) throw;    // Check allowance
-        balanceOf[_from] -= _value;                          // Subtract from the sender
-        supply -= _value;                               // Updates totalSupply
+        if (balanceOf[_from] < _value) throw;                       // Check if the sender has enough
+        if (_value > allowance[_from][msg.sender]) throw;           // Check allowance
+        balanceOf[_from] -= _value;                                 // Subtract from the sender
+        supply -= _value;                                           // Updates totalSupply
         Burn(_from, _value);
         return true;
     }
